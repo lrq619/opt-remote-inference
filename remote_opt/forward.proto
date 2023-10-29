@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+
+service RemoteForward {
+  rpc Forward(ForwardRequest) returns (ForwardResponse) {}
+}
+
+message ForwardRequest {
+    bytes decoder_layer_inputs = 1;
+    bytes next_decoder_cache = 2;
+    bytes past_key_values = 3;
+}
+
+message ForwardResponse {
+  bytes hidden_states = 1;
+  bytes next_decoder_cache = 2;
+  repeated float inference_latencys = 3;
+  repeated float communication_overheads = 4;
+  float whole_forward_latency = 5;
+}
