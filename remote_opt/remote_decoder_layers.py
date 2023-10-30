@@ -36,6 +36,10 @@ class RemoteOPTDecoderLayers(nn.Module):
 
         self.logger = init_logger(MODEL_NAME)
 
+    # only to ensure that this class has been inited in the remote_end
+    def is_initialized(self):
+        return True
+
     def forward(self, hidden_states, attention_mask, past_key_values):
 
         self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask, past_key_values))}")
@@ -78,7 +82,8 @@ class RemoteOPTDecoderLayers(nn.Module):
 
         # send the outputs via grpc, need to send hidden_states and next_decoder_cache back to cpu
         hidden_states = hidden_states.to('cpu')
-        next_decoder_cache = next_decoder_cache.to('cpu')
+        next_decoder_cache = tuple(tensor.to('cpu') for tensor in next_decoder_cache)
+        # next_decoder_cache = next_decoder_cache.to('cpu')
 
         whole_forward_latency = (time.time() - forward_start)
 

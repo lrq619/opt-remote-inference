@@ -24,8 +24,14 @@ class RemoteOPTDecoder(OPTDecoder):
         self.worker_layer_map = worker_layer_map
         self.layers_refs = []
         for worker in self.worker_layer_map.keys():
+            self.logger.info(f"start loading worker: {worker}")
             self.layers_refs.append(rpc.remote(worker, RemoteOPTDecoderLayers, args=(config, self.worker_layer_map[worker])))
+
+        for rref in self.layers_refs:
+            is_initialized = _remote_method(RemoteOPTDecoderLayers.is_initialized, rref)
     
+        self.logger.info(f"end loading all workers")
+
     # set the embedding layer locally
     def set_embeddings(self, embed_tokens, embed_positions):
         self.embed_tokens = embed_tokens
@@ -140,7 +146,7 @@ class RemoteOPTDecoder(OPTDecoder):
         
             # hidden_states, next_decoder_cache, inference_latency, whole_forward_latency = outputs
             hidden_states = outputs[0] 
-            next_decoder_cache += outputs[1]
+            next_decoder_cache += (outputs[1],)
             inference_latencys.append(outputs[2])
 
             comm_overhead = rtt - outputs[3]
@@ -152,7 +158,7 @@ class RemoteOPTDecoder(OPTDecoder):
         self.logger.info(f"In this forward, inference takes {sum_inference_latencys:.1f}s, comm overheads takes: {sum_comm_overheads:.1f}s")
 
 
-
+        hidden_states = hidden_states.to('cuda:0')
 
 
 

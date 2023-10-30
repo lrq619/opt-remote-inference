@@ -12,7 +12,7 @@ def my_generate(model : OPTForCausalLM, input_ids, max_new_tokens):
     for i in range(max_new_tokens):
         past_key_values = None
         model_inputs = model.prepare_inputs_for_generation(input_ids=_input_ids, use_cache=True, past_key_values=past_key_values)
-        outputs = model.forward(**model_inputs)
+        outputs, inference_latency, comm_overhead = model.forward(**model_inputs)
 
         next_token_logits = outputs.logits[:,-1,:]
         past_key_values = outputs.past_key_values
