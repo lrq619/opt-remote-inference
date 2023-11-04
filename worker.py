@@ -2,7 +2,7 @@ import os
 import argparse
 import torch.distributed.rpc as rpc
 import torch.distributed as dist
-os.environ['MASTER_ADDR'] = 'localhost'
+os.environ['MASTER_ADDR'] = '172.21.140.45'
 os.environ['MASTER_PORT'] = '29500'
 
 parser = argparse.ArgumentParser(description="Remote Decoder Layers")
