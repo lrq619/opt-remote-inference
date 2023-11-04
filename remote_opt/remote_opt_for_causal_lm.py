@@ -42,7 +42,7 @@ class RemoteOPTForCausalLM(OPTForCausalLM):
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
         # decoder outputs consists of (dec_features, layer_state, dec_hidden, dec_attn)
-        outputs, sum_inference_latencys, sum_communication_overheads= self.model.decoder(
+        outputs, metrics = self.model.decoder(
             input_ids=input_ids,
             attention_mask=attention_mask,
             head_mask=head_mask,
@@ -77,4 +77,4 @@ class RemoteOPTForCausalLM(OPTForCausalLM):
             past_key_values=outputs.past_key_values,
             hidden_states=outputs.hidden_states,
             attentions=outputs.attentions,
-        ), sum_inference_latencys, sum_communication_overheads
+        ), metrics

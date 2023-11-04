@@ -12,7 +12,7 @@ from torch.distributed import rpc
 from .remote_decoder_layers import RemoteOPTDecoderLayers
 import time
 from .remote_methods import _remote_method
-from .utils import get_object_size
+from .utils import get_object_size, send_past_key_value_to
 from .logger import init_logger
 
 
@@ -25,10 +25,12 @@ class RemoteOPTDecoder(OPTDecoder):
         self.layers_refs = []
         for worker in self.worker_layer_map.keys():
             self.logger.info(f"start loading worker: {worker}")
-            self.layers_refs.append(rpc.remote(worker, RemoteOPTDecoderLayers, args=(config, self.worker_layer_map[worker])))
-
+            self.layers_refs.append(rpc.remote(worker, RemoteOPTDecoderLayers, args=(config, self.worker_layer_map[worker]),timeout=600))
+        # self.logger.info(f"going to sleep 2 min")
+        # time.sleep(120)
+        # self.logger.info(f"wake up from sleeping")
         for rref in self.layers_refs:
-            is_initialized = _remote_method(RemoteOPTDecoderLayers.is_initialized, rref)
+            _remote_method(RemoteOPTDecoderLayers.is_initialized, rref)
     
         self.logger.info(f"end loading all workers")
 
@@ -133,24 +135,35 @@ class RemoteOPTDecoder(OPTDecoder):
         # transmit through rpc, so first sends to cpu
         hidden_states = hidden_states.to('cpu')
         attention_mask = causal_attention_mask.to('cpu')
-        past_key_values = past_key_values.to('cpu') if past_key_values else None
+        past_key_values = send_past_key_value_to(past_key_values, 'cpu')
+        # if past_key_values is not None:
+        #     for past_key_value in past_key_values:
+        #         for tensor in past_key_value:
+        #             tensor = tensor.to('cpu')
+        # past_key_values = past_key_values.to('cpu') if past_key_values else None
 
         inference_latencys = []
         comm_overheads = []
-        for layers_ref in self.layers_refs:
+        inter_tensor_sizes = []
+
+        for i, layers_ref in enumerate(self.layers_refs):
             inputs = (hidden_states, attention_mask, past_key_values)
-            self.logger.info(f"Going to send {get_object_size(inputs)/(1024**2):.1f} MB data")
+            inputs_size = get_object_size(inputs) 
+            self.logger.info(f"Going to send {inputs_size/(1024**2):.1f} MB data")
             start = time.time()
             outputs = _remote_method(RemoteOPTDecoderLayers.forward, layers_ref, hidden_states, attention_mask, past_key_values)
             rtt = time.time() - start
         
             # hidden_states, next_decoder_cache, inference_latency, whole_forward_latency = outputs
             hidden_states = outputs[0] 
-            next_decoder_cache += (outputs[1],)
+            next_decoder_cache += outputs[1]
             inference_latencys.append(outputs[2])
 
-            comm_overhead = rtt - outputs[3]
-            comm_overheads.append(comm_overhead)
+            # The first layers comm overhead doesn't take into account
+            if i != 0:
+                comm_overhead = rtt - outputs[3]
+                comm_overheads.append(comm_overhead)
+                inter_tensor_sizes.append(inputs_size)
 
         sum_inference_latencys = sum(inference_latencys)
         sum_comm_overheads = sum(comm_overheads)
@@ -179,4 +192,4 @@ class RemoteOPTDecoder(OPTDecoder):
             past_key_values=next_cache,
             hidden_states=all_hidden_states,
             attentions=all_self_attns,
-        ), sum_inference_latencys, sum_comm_overheads
+        ), (inference_latencys, comm_overheads, inter_tensor_sizes)
