@@ -15,9 +15,6 @@ def baseline_model_loading(model_name:str) -> (OPTConfig, PreTrainedTokenizer,OP
     return config, tokenizer, model
 
 def remote_model_loading(model_name:str, world_size:int) -> (OPTConfig, PreTrainedTokenizer, RemoteOPTForCausalLM):
-    config = AutoConfig.from_pretrained(f"facebook/{model_name}")
-    tokenizer = AutoTokenizer.from_pretrained(f"facebook/{model_name}",padding_side='left')
-    whole_model = OPTForCausalLM.from_pretrained(f"facebook/{MODEL_NAME}").half()
 
     master_addr = "0.0.0.0"
     master_port = '29500'
@@ -25,6 +22,14 @@ def remote_model_loading(model_name:str, world_size:int) -> (OPTConfig, PreTrain
     os.environ['MASTER_PORT'] = master_port
     print(f"master listening on {master_addr}:{master_port}")
     rpc.init_rpc("master", rank = 0, world_size = world_size)
+    print("master init finished")
+
+    print("start model loading")
+    config = AutoConfig.from_pretrained(f"facebook/{model_name}")
+    tokenizer = AutoTokenizer.from_pretrained(f"facebook/{model_name}",padding_side='left')
+    whole_model = OPTForCausalLM.from_pretrained(f"facebook/{MODEL_NAME}").half()
+    print("model loading finished")
+
     # save layer's state dict
     create_directory(f"{STATE_DICT_PATH}")
     create_directory(f"{STATE_DICT_PATH}/{MODEL_NAME}")

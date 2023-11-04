@@ -13,5 +13,7 @@ args = parser.parse_args()
 rank = args.rank
 world_size = args.world_size
 
+print("try to join master")
 rpc.init_rpc(f"worker{rank}", rank=rank, world_size=world_size)
+print("join master finished")
 rpc.shutdown()
