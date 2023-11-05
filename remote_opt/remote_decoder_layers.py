@@ -37,6 +37,7 @@ class RemoteOPTDecoderLayers(nn.Module):
 
         # init a None past key value 
         self.past_key_values = None
+        # attention mask wouldn't change during the forward, only need to be transmitted once
         self.logger.info(f"Leaving remote layers loading")
 
 
@@ -46,11 +47,11 @@ class RemoteOPTDecoderLayers(nn.Module):
 
     def forward(self, hidden_states, attention_mask):
 
-        self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask))/(1024**2)}MB")
+        self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask))/(1024):.1f}KB")
 
         hidden_states = hidden_states.to('cuda:0')
         attention_mask = attention_mask.to('cuda:0')
-        # past_key_values = send_past_key_value_to(past_key_values, 'cuda:0')
+
         forward_start = time.time()
 
         use_cache = True
@@ -60,9 +61,9 @@ class RemoteOPTDecoderLayers(nn.Module):
         start = time.time() 
         with torch.no_grad():
             for idx, decoder_layer in enumerate(self.layers):
-                # layer_idx = idx + self.layers_range[0]
                 past_key_value = self.past_key_values[idx] if self.past_key_values else None
-                # past_key_value = past_key_values[layer_idx] if past_key_values is not None else None
+                
+                layer_start = time.time()
                 layer_outputs = decoder_layer(
                     hidden_states = hidden_states,
                     attention_mask = attention_mask,
@@ -71,6 +72,8 @@ class RemoteOPTDecoderLayers(nn.Module):
                     output_attentions=output_attentions,
                     layer_head_mask = None
                 )
+                layer_latency = 1000*(time.time() - layer_start)
+                print(f"layer-{idx} latency:{layer_latency:.1f} ms")
 
                 hidden_states = layer_outputs[0]
 
@@ -101,5 +104,5 @@ class RemoteOPTDecoderLayers(nn.Module):
 
         whole_forward_latency = (time.time() - forward_start)
 
-        return hidden_states, next_decoder_cache, inference_latency, whole_forward_latency 
+        return hidden_states, inference_latency, whole_forward_latency 
 

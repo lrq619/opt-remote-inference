@@ -41,7 +41,15 @@ logits_processor = LogitsProcessorList()
 with torch.no_grad():
     past_key_values = None
     for i in range(2):
-        model_inputs = model.prepare_inputs_for_generation(input_ids=input_ids, use_cache=True, past_key_values=past_key_values)
+        if i == 0:
+            model_inputs = model.prepare_inputs_for_generation(input_ids=input_ids, use_cache=True, past_key_values=past_key_values)
+        else:
+            model_inputs = {
+                "past_key_values":None,
+                "use_cache": True,
+                "input_ids":input_ids[:, -1:],
+                "past_key_values_length":input_ids.shape[1] - 1
+            }
         start = time.time()
 
         batch_outputs, metrics = model.forward(**model_inputs)

@@ -33,6 +33,7 @@ class RemoteOPTForCausalLM(OPTForCausalLM):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
+        past_key_values_length = 0,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
 
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
@@ -52,6 +53,7 @@ class RemoteOPTForCausalLM(OPTForCausalLM):
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
+            past_key_values_length = past_key_values_length
         )
 
         logits = self.lm_head(outputs[0]).contiguous()

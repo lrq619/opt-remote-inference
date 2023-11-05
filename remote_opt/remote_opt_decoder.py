@@ -51,6 +51,7 @@ class RemoteOPTDecoder(OPTDecoder):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
+        past_key_values_length:int = 0,
     ) -> Union[Tuple, BaseModelOutputWithPast]:
         forward_start = time.time()
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
@@ -76,7 +77,7 @@ class RemoteOPTDecoder(OPTDecoder):
             inputs_embeds = self.embed_tokens(input_ids)
 
         batch_size, seq_length = input_shape
-        past_key_values_length = past_key_values[0][0].shape[2] if past_key_values is not None else 0
+        # past_key_values_length = past_key_values[0][0].shape[2] if past_key_values is not None else 0
         # required mask seq length can be calculated via length of past
         mask_seq_length = past_key_values_length + seq_length
 
@@ -127,22 +128,24 @@ class RemoteOPTDecoder(OPTDecoder):
         inter_tensor_sizes = []
 
         for i, layers_ref in enumerate(self.layers_refs):
-            inputs = (hidden_states, attention_mask, past_key_values)
+            inputs = (hidden_states, attention_mask)
+            # inputs = (hidden_states, attention_mask)
             inputs_size = get_object_size(inputs) 
-            self.logger.info(f"Going to send {inputs_size/(1024**2):.1f} MB data")
+            self.logger.info(f"Going to send {inputs_size/(1024):.1f} KB data")
             start = time.time()
             outputs = _remote_method(RemoteOPTDecoderLayers.forward, layers_ref, hidden_states, attention_mask)
+
             rtt = time.time() - start
         
             # hidden_states, next_decoder_cache, inference_latency, whole_forward_latency = outputs
             hidden_states = outputs[0] 
-            next_decoder_cache += outputs[1]
+            # next_decoder_cache += outputs[1]
 
             # collect metrics
-            inference_latencys.append(outputs[2])
+            inference_latencys.append(outputs[1])
             # The first layers comm overhead doesn't take into account
             if i != 0:
-                comm_overhead = rtt - outputs[3]
+                comm_overhead = rtt - outputs[2]
                 comm_overheads.append(comm_overhead)
                 inter_tensor_sizes.append(inputs_size)
 
@@ -168,6 +171,7 @@ class RemoteOPTDecoder(OPTDecoder):
 
 
         next_cache = next_decoder_cache if use_cache else None
+        next_cache = None
 
         return BaseModelOutputWithPast(
             last_hidden_state=hidden_states,
