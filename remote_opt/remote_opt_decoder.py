@@ -88,15 +88,10 @@ class RemoteOPTDecoder(OPTDecoder):
                 f"The provided attention mask has length {attention_mask.shape[1]}, but its length should be "
                 f"{mask_seq_length} (sum of the lengths of current and past inputs)"
             )
-        # self.logger.info(f"attention_mask: {attention_mask}")
-        # self.logger.info(f"attention_mask.shape: {attention_mask.shape}")
-        # self.logger.info(f"input_shape: {input_shape}")
-        # self.logger.info(f"inputs_embeds: {inputs_embeds}")
-        # self.logger.info(f"past_key_values_length: {past_key_values_length}")
         causal_attention_mask = self._prepare_decoder_attention_mask(
             attention_mask, input_shape, inputs_embeds, past_key_values_length
         )
-        # self.logger.info(f"causal_attention_mask:\n{causal_attention_mask}")
+
         pos_embeds = self.embed_positions(attention_mask, past_key_values_length)
 
         if self.project_in is not None:
@@ -121,26 +116,11 @@ class RemoteOPTDecoder(OPTDecoder):
         embedding_latency = 1000*(time.time() - forward_start)
         self.logger.info(f"embedding latency: {embedding_latency:.1f} ms")
 
-        # decoder_layer_inputs = {}
-        # decoder_layer_inputs["hidden_states"] = hidden_states
-        # decoder_layer_inputs["attention_mask"] = causal_attention_mask
-        # decoder_layer_inputs["layer_head_mask"] = (None)
-        # decoder_layer_inputs["output_attentions"] = output_attentions
-        # decoder_layer_inputs["use_cache"] = use_cache
-
-        # decoder_layer_inputs_bytes = pickle.dumps(decoder_layer_inputs)
-        # next_decoder_cache_bytes = pickle.dumps(next_decoder_cache)
-        # past_key_values_bytes = pickle.dumps(past_key_values)
 
         # transmit through rpc, so first sends to cpu
         hidden_states = hidden_states.to('cpu')
         attention_mask = causal_attention_mask.to('cpu')
         past_key_values = send_past_key_value_to(past_key_values, 'cpu')
-        # if past_key_values is not None:
-        #     for past_key_value in past_key_values:
-        #         for tensor in past_key_value:
-        #             tensor = tensor.to('cpu')
-        # past_key_values = past_key_values.to('cpu') if past_key_values else None
 
         inference_latencys = []
         comm_overheads = []
@@ -157,8 +137,9 @@ class RemoteOPTDecoder(OPTDecoder):
             # hidden_states, next_decoder_cache, inference_latency, whole_forward_latency = outputs
             hidden_states = outputs[0] 
             next_decoder_cache += outputs[1]
-            inference_latencys.append(outputs[2])
 
+            # collect metrics
+            inference_latencys.append(outputs[2])
             # The first layers comm overhead doesn't take into account
             if i != 0:
                 comm_overhead = rtt - outputs[3]

@@ -48,21 +48,11 @@ class RemoteOPTDecoderLayers(nn.Module):
 
     def forward(self, hidden_states, attention_mask, past_key_values):
 
-        self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask, past_key_values))}")
+        self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask, past_key_values))/(1024**2)}MB")
 
         hidden_states = hidden_states.to('cuda:0')
         attention_mask = attention_mask.to('cuda:0')
         past_key_values = send_past_key_value_to(past_key_values, 'cuda:0')
-        # if past_key_values != None:
-        #     for tensor in past_key_values:
-        #         print(tensor.shape)
-        # if past_key_values != None:
-        #     for past_key_value in past_key_values:
-        #         for tensor in past_key_value:
-        #             tensor = tensor.to('cuda:0')
-        # past_key_values = tuple(tensor.to('cuda:0') for tensor in past_key_values) if past_key_values else None
-        # past_key_values = past_key_values.to('cuda:0') if past_key_values else None
-
         forward_start = time.time()
 
         use_cache = True
@@ -92,7 +82,7 @@ class RemoteOPTDecoderLayers(nn.Module):
         inference_latency = (time.time() - start)
 
         
-        self.logger.info(f"inference latency: {inference_latency:.1f} s")
+        self.logger.info(f"inference latency: {inference_latency*1000:.1f} ms")
 
         # send the outputs via grpc, need to send hidden_states and next_decoder_cache back to cpu
         hidden_states = hidden_states.to('cpu')

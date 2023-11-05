@@ -52,4 +52,6 @@ def remote_model_loading(model_name:str, world_size:int) -> (OPTConfig, PreTrain
     model.set_embeddings(embed_tokens, embed_positions)
     model.set_final_norm(final_layer_norm, lm_head)
 
+    del whole_model
+
     return config, tokenizer, model
