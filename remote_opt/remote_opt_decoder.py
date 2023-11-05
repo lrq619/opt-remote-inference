@@ -120,7 +120,7 @@ class RemoteOPTDecoder(OPTDecoder):
         # transmit through rpc, so first sends to cpu
         hidden_states = hidden_states.to('cpu')
         attention_mask = causal_attention_mask.to('cpu')
-        past_key_values = send_past_key_value_to(past_key_values, 'cpu')
+        # past_key_values = send_past_key_value_to(past_key_values, 'cpu')
 
         inference_latencys = []
         comm_overheads = []
@@ -131,7 +131,7 @@ class RemoteOPTDecoder(OPTDecoder):
             inputs_size = get_object_size(inputs) 
             self.logger.info(f"Going to send {inputs_size/(1024**2):.1f} MB data")
             start = time.time()
-            outputs = _remote_method(RemoteOPTDecoderLayers.forward, layers_ref, hidden_states, attention_mask, past_key_values)
+            outputs = _remote_method(RemoteOPTDecoderLayers.forward, layers_ref, hidden_states, attention_mask)
             rtt = time.time() - start
         
             # hidden_states, next_decoder_cache, inference_latency, whole_forward_latency = outputs
@@ -168,6 +168,7 @@ class RemoteOPTDecoder(OPTDecoder):
 
 
         next_cache = next_decoder_cache if use_cache else None
+
         return BaseModelOutputWithPast(
             last_hidden_state=hidden_states,
             past_key_values=next_cache,

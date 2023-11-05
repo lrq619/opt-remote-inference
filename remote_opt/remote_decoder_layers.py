@@ -27,9 +27,6 @@ class RemoteOPTDecoderLayers(nn.Module):
         self.layers_range = layers_range 
         self.layers = nn.ModuleList([OPTDecoderLayer(config) for _ in layers_range]).half()
 
-        # whole_model = OPTForCausalLM.from_pretrained(f"facebook/{MODEL_NAME}").half()
-         
-        # layers = whole_model.get_decoder().layers[layers_range[0]:layers_range[-1]+1]
 
         
         save_dict_path = f"{STATE_DICT_PATH}/{MODEL_NAME}/layers-{layers_range[0]}-{layers_range[-1]}.pth"
@@ -37,8 +34,9 @@ class RemoteOPTDecoderLayers(nn.Module):
         self.layers.load_state_dict(torch.load(save_dict_path))
         self.layers.to("cuda:0")
         self.layers.eval()
-        
-        # del whole_model
+
+        # init a None past key value 
+        self.past_key_values = None
         self.logger.info(f"Leaving remote layers loading")
 
 
@@ -46,13 +44,13 @@ class RemoteOPTDecoderLayers(nn.Module):
     def is_initialized(self):
         return
 
-    def forward(self, hidden_states, attention_mask, past_key_values):
+    def forward(self, hidden_states, attention_mask):
 
-        self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask, past_key_values))/(1024**2)}MB")
+        self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask))/(1024**2)}MB")
 
         hidden_states = hidden_states.to('cuda:0')
         attention_mask = attention_mask.to('cuda:0')
-        past_key_values = send_past_key_value_to(past_key_values, 'cuda:0')
+        # past_key_values = send_past_key_value_to(past_key_values, 'cuda:0')
         forward_start = time.time()
 
         use_cache = True
@@ -62,8 +60,9 @@ class RemoteOPTDecoderLayers(nn.Module):
         start = time.time() 
         with torch.no_grad():
             for idx, decoder_layer in enumerate(self.layers):
-                layer_idx = idx + self.layers_range[0]
-                past_key_value = past_key_values[layer_idx] if past_key_values is not None else None
+                # layer_idx = idx + self.layers_range[0]
+                past_key_value = self.past_key_values[idx] if self.past_key_values else None
+                # past_key_value = past_key_values[layer_idx] if past_key_values is not None else None
                 layer_outputs = decoder_layer(
                     hidden_states = hidden_states,
                     attention_mask = attention_mask,
@@ -80,6 +79,7 @@ class RemoteOPTDecoderLayers(nn.Module):
 
 
         inference_latency = (time.time() - start)
+        self.past_key_values = next_decoder_cache
 
         
         self.logger.info(f"inference latency: {inference_latency*1000:.1f} ms")

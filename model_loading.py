@@ -44,6 +44,9 @@ def remote_model_loading(model_name:str, world_size:int) -> (OPTConfig, PreTrain
             print(f"saved layers to {save_dict_path}")
 
     model = RemoteOPTForCausalLM(config, worker_layer_map=WORKER_LAYERS_MAP)
+
+    del model.get_decoder().layers
+
     embed_tokens = whole_model.get_decoder().embed_tokens
     embed_positions = whole_model.get_decoder().embed_positions
     final_layer_norm = whole_model.get_decoder().final_layer_norm
