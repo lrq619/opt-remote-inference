@@ -73,7 +73,7 @@ class RemoteOPTDecoderLayers(nn.Module):
                     layer_head_mask = None
                 )
                 layer_latency = 1000*(time.time() - layer_start)
-                print(f"layer-{idx} latency:{layer_latency:.1f} ms")
+                # print(f"layer-{idx} latency:{layer_latency:.1f} ms")
 
                 hidden_states = layer_outputs[0]
 

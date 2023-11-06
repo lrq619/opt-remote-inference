@@ -47,7 +47,16 @@ def my_generate_with_ctp(model : OPTForCausalLM, input_ids, max_new_tokens):
     past_key_values = None
     run = ctp.append_run("generate_case_study")
     for i in range(max_new_tokens):
-        model_inputs = model.prepare_inputs_for_generation(input_ids=_input_ids, use_cache=True, past_key_values=past_key_values)
+        if i == 0:
+            model_inputs = model.prepare_inputs_for_generation(input_ids=_input_ids, use_cache=True, past_key_values=past_key_values)
+        else:
+            model_inputs = {
+                "past_key_values":None,
+                "use_cache": True,
+                "input_ids":_input_ids[:, -1:],
+                "past_key_values_length":_input_ids.shape[1] - 1
+            }
+        # model_inputs = model.prepare_inputs_for_generation(input_ids=_input_ids, use_cache=True, past_key_values=past_key_values)
         outputs, metrics = model.forward(**model_inputs)
 
         inference_latencys, comm_overheads, inter_tensor_sizes = metrics

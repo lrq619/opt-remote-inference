@@ -40,7 +40,7 @@ logits_processor = LogitsProcessorList()
 
 with torch.no_grad():
     past_key_values = None
-    for i in range(2):
+    for i in range(3):
         if i == 0:
             model_inputs = model.prepare_inputs_for_generation(input_ids=input_ids, use_cache=True, past_key_values=past_key_values)
         else:
