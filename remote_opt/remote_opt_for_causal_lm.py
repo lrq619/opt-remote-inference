@@ -20,6 +20,9 @@ class RemoteOPTForCausalLM(OPTForCausalLM):
     def set_final_norm(self, final_layer_norm, lm_head):
         self.lm_head = lm_head
         self.model.decoder.final_layer_norm = final_layer_norm
+
+    def clear_kv_cache(self):
+        self.model.decoder.clear_kv_cache()
     
     def forward(
         self,

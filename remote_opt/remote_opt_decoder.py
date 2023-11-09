@@ -39,6 +39,10 @@ class RemoteOPTDecoder(OPTDecoder):
         self.embed_tokens = embed_tokens
         self.embed_positions = embed_positions
 
+    def clear_kv_cache(self):
+        for layers_ref in self.layers_refs:
+            _remote_method(RemoteOPTDecoderLayers.clear_kv_cache, layers_ref)
+
     
     def forward(
         self,
@@ -134,8 +138,9 @@ class RemoteOPTDecoder(OPTDecoder):
             self.logger.info(f"Going to send {inputs_size/(1024):.1f} KB data")
             start = time.time()
             outputs = _remote_method(RemoteOPTDecoderLayers.forward, layers_ref, hidden_states, attention_mask)
-
             rtt = time.time() - start
+
+            output_size = get_object_size(outputs)
         
             # hidden_states, next_decoder_cache, inference_latency, whole_forward_latency = outputs
             hidden_states = outputs[0] 
@@ -147,7 +152,7 @@ class RemoteOPTDecoder(OPTDecoder):
             if i != 0:
                 comm_overhead = rtt - outputs[2]
                 comm_overheads.append(comm_overhead)
-                inter_tensor_sizes.append(inputs_size)
+                inter_tensor_sizes.append(inputs_size+output_size)
 
         sum_inference_latencys = sum(inference_latencys)
         sum_comm_overheads = sum(comm_overheads)

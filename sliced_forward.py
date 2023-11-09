@@ -3,7 +3,7 @@ from remote_opt.remote_opt_for_causal_lm import RemoteOPTForCausalLM
 import torch.distributed.rpc as rpc
 from remote_opt.config import MODEL_NAME, STATE_DICT_PATH
 from preprocess import preprocess_alpaca
-from model_loading import baseline_model_loading, remote_model_loading
+from model_loading import baseline_model_loading, remote_model_loading, warm_up, warm_up_remote
 import time
 import torch
 import numpy as np
@@ -35,12 +35,14 @@ num_batches = (prompt_num + batch_size - 1) // batch_size
 batch_inputs = tokenizer(prompts, return_tensors="pt", padding=True).to(device)
 
 input_ids = batch_inputs["input_ids"]
+warm_up_remote(model, input_ids)
+model.clear_kv_cache()
 
 logits_processor = LogitsProcessorList()
 
 with torch.no_grad():
     past_key_values = None
-    for i in range(3):
+    for i in range(2):
         if i == 0:
             model_inputs = model.prepare_inputs_for_generation(input_ids=input_ids, use_cache=True, past_key_values=past_key_values)
         else:

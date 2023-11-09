@@ -45,6 +45,10 @@ class RemoteOPTDecoderLayers(nn.Module):
     def is_initialized(self):
         return
 
+    # clears the kv_cache
+    def clear_kv_cache(self):
+        self.past_key_values = None
+
     def forward(self, hidden_states, attention_mask):
 
         self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask))/(1024):.1f}KB")
@@ -89,20 +93,10 @@ class RemoteOPTDecoderLayers(nn.Module):
 
         # send the outputs via grpc, need to send hidden_states and next_decoder_cache back to cpu
         hidden_states = hidden_states.to('cpu')
-        next_decoder_cache = send_past_key_value_to(next_decoder_cache, 'cpu')
-
-
-        # for past_key_value in next_decoder_cache:
-        #     for tensor in past_key_value:
-        #         tensor = tensor.to('cpu')        
-
-        
-        # next_decoder_cache = tuple(tensor.to('cpu') for tensor in next_decoder_cache)
-        # next_decoder_cache = next_decoder_cache.to('cpu')
-        # for tensor in next_decoder_cache:
-        #     print(f"after to cpu, type: {type(tensor)}")
 
         whole_forward_latency = (time.time() - forward_start)
+
+
 
         return hidden_states, inference_latency, whole_forward_latency 
 

@@ -1,7 +1,7 @@
 from transformers import AutoTokenizer, AutoConfig, OPTForCausalLM, LogitsProcessorList
 from remote_opt.config import MODEL_NAME, STATE_DICT_PATH
 from preprocess import preprocess_alpaca
-from model_loading import baseline_model_loading
+from model_loading import baseline_model_loading, warm_up
 import time
 import torch
 
@@ -24,12 +24,15 @@ num_batches = (prompt_num + batch_size - 1) // batch_size
 batch_inputs = tokenizer(prompts, return_tensors="pt", padding=True).to(device)
 
 input_ids = batch_inputs["input_ids"]
+warm_up(model, input_ids)
+print(f"finish warm up")
 
 logits_processor = LogitsProcessorList()
 
 with torch.no_grad():
     past_key_values = None
-    for i in range(3):
+    for i in range(2):
+        # warm_up()
         model_inputs = model.prepare_inputs_for_generation(input_ids=input_ids, use_cache=True, past_key_values=past_key_values)
         start = time.time()
 

@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer, AutoConfig, OPTForCausalLM, OPTConfig, PreTrainedTokenizer
+from transformers import AutoTokenizer, AutoConfig, OPTForCausalLM, OPTConfig, PreTrainedTokenizer, LogitsProcessorList
 from remote_opt.remote_opt_for_causal_lm import RemoteOPTForCausalLM
 from remote_opt.config import MODEL_NAME, STATE_DICT_PATH
 import os
@@ -6,6 +6,7 @@ import torch.distributed.rpc as rpc
 from utils import create_directory
 from config import WORKER_LAYERS_MAP
 import torch
+import time
 
 
 def baseline_model_loading(model_name:str) -> (OPTConfig, PreTrainedTokenizer,OPTForCausalLM):
@@ -57,4 +58,49 @@ def remote_model_loading(model_name:str, world_size:int) -> (OPTConfig, PreTrain
 
     del whole_model
 
+    # warm_up()
     return config, tokenizer, model
+
+def warm_up(model, input_ids):
+    logits_processor = LogitsProcessorList()
+    with torch.no_grad():
+        past_key_values = None
+        for i in range(2):
+            # warm_up()
+            model_inputs = model.prepare_inputs_for_generation(input_ids=input_ids, use_cache=True, past_key_values=past_key_values)
+
+            batch_outputs = model.forward(**model_inputs)
+
+            next_token_logits = batch_outputs.logits[:,-1,:]
+            past_key_values = batch_outputs.past_key_values
+            next_tokens_scores = logits_processor(input_ids, next_token_logits)
+
+            next_token_ids = torch.argmax(next_tokens_scores, dim=-1)
+            input_ids = torch.cat([input_ids, next_token_ids[:, None]], dim=-1)
+    del input_ids
+
+
+
+def warm_up_remote(model, input_ids):
+    logits_processor = LogitsProcessorList()
+    with torch.no_grad():
+        past_key_values = None
+        for i in range(2):
+            if i == 0:
+                model_inputs = model.prepare_inputs_for_generation(input_ids=input_ids, use_cache=True, past_key_values=past_key_values)
+            else:
+                model_inputs = {
+                    "past_key_values":None,
+                    "use_cache": True,
+                    "input_ids":input_ids[:, -1:],
+                    "past_key_values_length":input_ids.shape[1] - 1
+                }
+
+            batch_outputs,metrics = model.forward(**model_inputs)
+
+            next_token_logits = batch_outputs.logits[:,-1,:]
+            past_key_values = batch_outputs.past_key_values
+            next_tokens_scores = logits_processor(input_ids, next_token_logits)
+
+            next_token_ids = torch.argmax(next_tokens_scores, dim=-1)
+            input_ids = torch.cat([input_ids, next_token_ids[:, None]], dim=-1)

@@ -1,0 +1,449 @@
+--------Enter 1's forward--------
+!!!spike_project shape:torch.Size([16, 55, 4096]) takes 108.12997817993164 ms
+!!!spike_first_bmm shape:torch.Size([512, 55, 128]) x torch.Size([512, 128, 55]) takes 3.4 ms
+!!!spike_second_bmm shape:torch.Size([512, 55, 55]) x torch.Size([512, 55, 128]) takes 2.1 ms
+!!!spike_forward in 1 iteration: 666.5 ms
+--------Enter 2's forward--------
+!!!spike_first_bmm shape:torch.Size([512, 1, 128]) x torch.Size([512, 128, 56]) takes 4.7 ms
+!!!spike_second_bmm shape:torch.Size([512, 1, 56]) x torch.Size([512, 56, 128]) takes 25.6 ms
+normal_forward in 2 itration: 60.3 ms
+--------Enter 3's forward--------
+normal_forward in 3 itration: 23.0 ms
+--------Enter 4's forward--------
+normal_forward in 4 itration: 22.2 ms
+--------Enter 5's forward--------
+normal_forward in 5 itration: 22.6 ms
+--------Enter 6's forward--------
+normal_forward in 6 itration: 21.8 ms
+--------Enter 7's forward--------
+normal_forward in 7 itration: 21.9 ms
+--------Enter 8's forward--------
+normal_forward in 8 itration: 21.9 ms
+--------Enter 9's forward--------
+normal_forward in 9 itration: 21.9 ms
+--------Enter 10's forward--------
+normal_forward in 10 itration: 22.0 ms
+--------Enter 11's forward--------
+normal_forward in 11 itration: 22.1 ms
+--------Enter 12's forward--------
+normal_forward in 12 itration: 23.0 ms
+--------Enter 13's forward--------
+normal_forward in 13 itration: 22.2 ms
+--------Enter 14's forward--------
+normal_forward in 14 itration: 22.0 ms
+--------Enter 15's forward--------
+normal_forward in 15 itration: 22.1 ms
+--------Enter 16's forward--------
+normal_forward in 16 itration: 21.9 ms
+--------Enter 17's forward--------
+normal_forward in 17 itration: 22.1 ms
+--------Enter 18's forward--------
+normal_forward in 18 itration: 22.6 ms
+--------Enter 19's forward--------
+normal_forward in 19 itration: 21.9 ms
+--------Enter 20's forward--------
+normal_forward in 20 itration: 21.9 ms
+--------Enter 21's forward--------
+normal_forward in 21 itration: 24.4 ms
+--------Enter 22's forward--------
+normal_forward in 22 itration: 22.9 ms
+--------Enter 23's forward--------
+normal_forward in 23 itration: 22.1 ms
+--------Enter 24's forward--------
+normal_forward in 24 itration: 22.0 ms
+--------Enter 25's forward--------
+normal_forward in 25 itration: 22.1 ms
+--------Enter 26's forward--------
+normal_forward in 26 itration: 22.1 ms
+--------Enter 27's forward--------
+!!!spike_forward in 27 iteration: 25.3 ms
+--------Enter 28's forward--------
+normal_forward in 28 itration: 28.2 ms
+--------Enter 29's forward--------
+normal_forward in 29 itration: 22.2 ms
+--------Enter 30's forward--------
+normal_forward in 30 itration: 22.2 ms
+--------Enter 31's forward--------
+normal_forward in 31 itration: 22.4 ms
+--------Enter 32's forward--------
+normal_forward in 32 itration: 22.1 ms
+--------Enter 33's forward--------
+normal_forward in 33 itration: 22.2 ms
+--------Enter 34's forward--------
+normal_forward in 34 itration: 22.1 ms
+--------Enter 35's forward--------
+normal_forward in 35 itration: 22.8 ms
+--------Enter 36's forward--------
+normal_forward in 36 itration: 23.2 ms
+--------Enter 37's forward--------
+normal_forward in 37 itration: 23.0 ms
+--------Enter 38's forward--------
+normal_forward in 38 itration: 22.5 ms
+--------Enter 39's forward--------
+normal_forward in 39 itration: 22.4 ms
+--------Enter 40's forward--------
+normal_forward in 40 itration: 22.3 ms
+--------Enter 41's forward--------
+normal_forward in 41 itration: 22.8 ms
+--------Enter 42's forward--------
+normal_forward in 42 itration: 22.2 ms
+--------Enter 43's forward--------
+!!!spike_forward in 43 iteration: 25.5 ms
+--------Enter 44's forward--------
+!!!spike_forward in 44 iteration: 29.2 ms
+--------Enter 45's forward--------
+normal_forward in 45 itration: 22.6 ms
+--------Enter 46's forward--------
+normal_forward in 46 itration: 22.9 ms
+--------Enter 47's forward--------
+normal_forward in 47 itration: 23.4 ms
+--------Enter 48's forward--------
+normal_forward in 48 itration: 22.5 ms
+--------Enter 49's forward--------
+normal_forward in 49 itration: 22.7 ms
+--------Enter 50's forward--------
+normal_forward in 50 itration: 22.5 ms
+--------Enter 51's forward--------
+normal_forward in 51 itration: 23.0 ms
+--------Enter 52's forward--------
+normal_forward in 52 itration: 22.7 ms
+--------Enter 53's forward--------
+normal_forward in 53 itration: 22.7 ms
+--------Enter 54's forward--------
+normal_forward in 54 itration: 22.7 ms
+--------Enter 55's forward--------
+normal_forward in 55 itration: 22.6 ms
+--------Enter 56's forward--------
+normal_forward in 56 itration: 22.7 ms
+--------Enter 57's forward--------
+normal_forward in 57 itration: 22.7 ms
+--------Enter 58's forward--------
+normal_forward in 58 itration: 22.7 ms
+--------Enter 59's forward--------
+!!!spike_forward in 59 iteration: 29.9 ms
+--------Enter 60's forward--------
+normal_forward in 60 itration: 29.6 ms
+--------Enter 61's forward--------
+normal_forward in 61 itration: 23.0 ms
+--------Enter 62's forward--------
+normal_forward in 62 itration: 22.9 ms
+--------Enter 63's forward--------
+normal_forward in 63 itration: 23.3 ms
+--------Enter 64's forward--------
+normal_forward in 64 itration: 23.0 ms
+--------Enter 65's forward--------
+normal_forward in 65 itration: 23.1 ms
+--------Enter 66's forward--------
+normal_forward in 66 itration: 23.9 ms
+--------Enter 67's forward--------
+normal_forward in 67 itration: 23.2 ms
+--------Enter 68's forward--------
+normal_forward in 68 itration: 23.1 ms
+--------Enter 69's forward--------
+normal_forward in 69 itration: 23.1 ms
+--------Enter 70's forward--------
+normal_forward in 70 itration: 23.1 ms
+--------Enter 71's forward--------
+normal_forward in 71 itration: 23.1 ms
+--------Enter 72's forward--------
+normal_forward in 72 itration: 23.2 ms
+--------Enter 73's forward--------
+normal_forward in 73 itration: 23.3 ms
+--------Enter 74's forward--------
+normal_forward in 74 itration: 23.0 ms
+--------Enter 75's forward--------
+!!!spike_forward in 75 iteration: 30.8 ms
+--------Enter 76's forward--------
+normal_forward in 76 itration: 31.0 ms
+--------Enter 77's forward--------
+normal_forward in 77 itration: 23.9 ms
+--------Enter 78's forward--------
+normal_forward in 78 itration: 23.2 ms
+--------Enter 79's forward--------
+normal_forward in 79 itration: 23.9 ms
+--------Enter 80's forward--------
+normal_forward in 80 itration: 23.3 ms
+--------Enter 81's forward--------
+normal_forward in 81 itration: 23.6 ms
+--------Enter 82's forward--------
+normal_forward in 82 itration: 23.3 ms
+--------Enter 83's forward--------
+normal_forward in 83 itration: 23.5 ms
+--------Enter 84's forward--------
+normal_forward in 84 itration: 23.5 ms
+--------Enter 85's forward--------
+normal_forward in 85 itration: 23.7 ms
+--------Enter 86's forward--------
+normal_forward in 86 itration: 23.5 ms
+--------Enter 87's forward--------
+normal_forward in 87 itration: 23.7 ms
+--------Enter 88's forward--------
+normal_forward in 88 itration: 23.5 ms
+--------Enter 89's forward--------
+normal_forward in 89 itration: 23.7 ms
+--------Enter 90's forward--------
+normal_forward in 90 itration: 23.5 ms
+--------Enter 91's forward--------
+!!!spike_forward in 91 iteration: 31.4 ms
+--------Enter 92's forward--------
+normal_forward in 92 itration: 31.4 ms
+--------Enter 93's forward--------
+normal_forward in 93 itration: 24.4 ms
+--------Enter 94's forward--------
+normal_forward in 94 itration: 23.9 ms
+--------Enter 95's forward--------
+normal_forward in 95 itration: 24.3 ms
+--------Enter 96's forward--------
+normal_forward in 96 itration: 24.0 ms
+--------Enter 97's forward--------
+normal_forward in 97 itration: 24.1 ms
+--------Enter 98's forward--------
+normal_forward in 98 itration: 23.7 ms
+--------Enter 99's forward--------
+normal_forward in 99 itration: 23.9 ms
+--------Enter 100's forward--------
+normal_forward in 100 itration: 23.8 ms
+--------Enter 101's forward--------
+normal_forward in 101 itration: 24.2 ms
+--------Enter 102's forward--------
+normal_forward in 102 itration: 24.0 ms
+--------Enter 103's forward--------
+normal_forward in 103 itration: 24.3 ms
+--------Enter 104's forward--------
+normal_forward in 104 itration: 23.9 ms
+--------Enter 105's forward--------
+normal_forward in 105 itration: 24.5 ms
+--------Enter 106's forward--------
+normal_forward in 106 itration: 23.9 ms
+--------Enter 107's forward--------
+!!!spike_forward in 107 iteration: 35.1 ms
+--------Enter 108's forward--------
+!!!spike_forward in 108 iteration: 39.7 ms
+--------Enter 109's forward--------
+normal_forward in 109 itration: 24.6 ms
+--------Enter 110's forward--------
+normal_forward in 110 itration: 24.2 ms
+--------Enter 111's forward--------
+normal_forward in 111 itration: 24.6 ms
+--------Enter 112's forward--------
+normal_forward in 112 itration: 24.5 ms
+--------Enter 113's forward--------
+normal_forward in 113 itration: 24.6 ms
+--------Enter 114's forward--------
+normal_forward in 114 itration: 24.2 ms
+--------Enter 115's forward--------
+normal_forward in 115 itration: 24.7 ms
+--------Enter 116's forward--------
+normal_forward in 116 itration: 24.4 ms
+--------Enter 117's forward--------
+normal_forward in 117 itration: 24.7 ms
+--------Enter 118's forward--------
+normal_forward in 118 itration: 24.4 ms
+--------Enter 119's forward--------
+normal_forward in 119 itration: 25.1 ms
+--------Enter 120's forward--------
+normal_forward in 120 itration: 24.5 ms
+--------Enter 121's forward--------
+normal_forward in 121 itration: 24.7 ms
+--------Enter 122's forward--------
+normal_forward in 122 itration: 24.4 ms
+--------Enter 123's forward--------
+!!!spike_forward in 123 iteration: 36.8 ms
+--------Enter 124's forward--------
+!!!spike_forward in 124 iteration: 48.1 ms
+--------Enter 125's forward--------
+normal_forward in 125 itration: 31.8 ms
+--------Enter 126's forward--------
+normal_forward in 126 itration: 27.7 ms
+--------Enter 127's forward--------
+normal_forward in 127 itration: 25.8 ms
+--------Enter 128's forward--------
+normal_forward in 128 itration: 25.1 ms
+--------Enter 129's forward--------
+normal_forward in 129 itration: 25.4 ms
+--------Enter 130's forward--------
+normal_forward in 130 itration: 24.7 ms
+--------Enter 131's forward--------
+normal_forward in 131 itration: 25.1 ms
+--------Enter 132's forward--------
+normal_forward in 132 itration: 24.9 ms
+--------Enter 133's forward--------
+normal_forward in 133 itration: 25.6 ms
+--------Enter 134's forward--------
+normal_forward in 134 itration: 24.9 ms
+--------Enter 135's forward--------
+normal_forward in 135 itration: 25.2 ms
+--------Enter 136's forward--------
+normal_forward in 136 itration: 24.8 ms
+--------Enter 137's forward--------
+normal_forward in 137 itration: 25.3 ms
+--------Enter 138's forward--------
+normal_forward in 138 itration: 24.8 ms
+--------Enter 139's forward--------
+!!!spike_forward in 139 iteration: 36.7 ms
+--------Enter 140's forward--------
+!!!spike_forward in 140 iteration: 41.7 ms
+--------Enter 141's forward--------
+normal_forward in 141 itration: 25.7 ms
+--------Enter 142's forward--------
+normal_forward in 142 itration: 25.1 ms
+--------Enter 143's forward--------
+normal_forward in 143 itration: 25.8 ms
+--------Enter 144's forward--------
+normal_forward in 144 itration: 25.3 ms
+--------Enter 145's forward--------
+normal_forward in 145 itration: 26.2 ms
+--------Enter 146's forward--------
+normal_forward in 146 itration: 25.2 ms
+--------Enter 147's forward--------
+normal_forward in 147 itration: 25.7 ms
+--------Enter 148's forward--------
+normal_forward in 148 itration: 25.3 ms
+--------Enter 149's forward--------
+normal_forward in 149 itration: 25.8 ms
+--------Enter 150's forward--------
+normal_forward in 150 itration: 25.3 ms
+--------Enter 151's forward--------
+normal_forward in 151 itration: 25.8 ms
+--------Enter 152's forward--------
+normal_forward in 152 itration: 25.3 ms
+--------Enter 153's forward--------
+normal_forward in 153 itration: 25.8 ms
+--------Enter 154's forward--------
+normal_forward in 154 itration: 25.4 ms
+--------Enter 155's forward--------
+!!!spike_forward in 155 iteration: 37.4 ms
+--------Enter 156's forward--------
+!!!spike_forward in 156 iteration: 42.9 ms
+--------Enter 157's forward--------
+normal_forward in 157 itration: 26.1 ms
+--------Enter 158's forward--------
+normal_forward in 158 itration: 25.7 ms
+--------Enter 159's forward--------
+normal_forward in 159 itration: 26.3 ms
+--------Enter 160's forward--------
+normal_forward in 160 itration: 25.7 ms
+--------Enter 161's forward--------
+normal_forward in 161 itration: 26.1 ms
+--------Enter 162's forward--------
+normal_forward in 162 itration: 25.6 ms
+--------Enter 163's forward--------
+normal_forward in 163 itration: 26.2 ms
+--------Enter 164's forward--------
+normal_forward in 164 itration: 25.7 ms
+--------Enter 165's forward--------
+normal_forward in 165 itration: 26.2 ms
+--------Enter 166's forward--------
+normal_forward in 166 itration: 25.9 ms
+--------Enter 167's forward--------
+normal_forward in 167 itration: 26.2 ms
+--------Enter 168's forward--------
+normal_forward in 168 itration: 25.8 ms
+--------Enter 169's forward--------
+normal_forward in 169 itration: 26.3 ms
+--------Enter 170's forward--------
+normal_forward in 170 itration: 25.9 ms
+--------Enter 171's forward--------
+!!!spike_forward in 171 iteration: 42.6 ms
+--------Enter 172's forward--------
+normal_forward in 172 itration: 43.9 ms
+--------Enter 173's forward--------
+normal_forward in 173 itration: 27.2 ms
+--------Enter 174's forward--------
+normal_forward in 174 itration: 26.2 ms
+--------Enter 175's forward--------
+normal_forward in 175 itration: 26.9 ms
+--------Enter 176's forward--------
+normal_forward in 176 itration: 26.2 ms
+--------Enter 177's forward--------
+normal_forward in 177 itration: 26.7 ms
+--------Enter 178's forward--------
+normal_forward in 178 itration: 26.0 ms
+--------Enter 179's forward--------
+normal_forward in 179 itration: 26.6 ms
+--------Enter 180's forward--------
+normal_forward in 180 itration: 26.1 ms
+--------Enter 181's forward--------
+normal_forward in 181 itration: 26.7 ms
+--------Enter 182's forward--------
+normal_forward in 182 itration: 26.3 ms
+--------Enter 183's forward--------
+normal_forward in 183 itration: 26.7 ms
+--------Enter 184's forward--------
+normal_forward in 184 itration: 26.4 ms
+--------Enter 185's forward--------
+normal_forward in 185 itration: 26.8 ms
+--------Enter 186's forward--------
+normal_forward in 186 itration: 26.2 ms
+--------Enter 187's forward--------
+!!!spike_forward in 187 iteration: 43.5 ms
+--------Enter 188's forward--------
+normal_forward in 188 itration: 44.3 ms
+--------Enter 189's forward--------
+normal_forward in 189 itration: 27.0 ms
+--------Enter 190's forward--------
+normal_forward in 190 itration: 26.6 ms
+--------Enter 191's forward--------
+normal_forward in 191 itration: 27.1 ms
+--------Enter 192's forward--------
+normal_forward in 192 itration: 26.6 ms
+--------Enter 193's forward--------
+normal_forward in 193 itration: 26.9 ms
+--------Enter 194's forward--------
+normal_forward in 194 itration: 26.5 ms
+--------Enter 195's forward--------
+normal_forward in 195 itration: 26.9 ms
+--------Enter 196's forward--------
+normal_forward in 196 itration: 26.7 ms
+--------Enter 197's forward--------
+normal_forward in 197 itration: 27.1 ms
+--------Enter 198's forward--------
+normal_forward in 198 itration: 26.8 ms
+--------Enter 199's forward--------
+normal_forward in 199 itration: 27.0 ms
+--------Enter 200's forward--------
+normal_forward in 200 itration: 26.8 ms
+--------Enter 201's forward--------
+normal_forward in 201 itration: 27.1 ms
+--------Enter 202's forward--------
+normal_forward in 202 itration: 26.8 ms
+--------Enter 203's forward--------
+!!!spike_forward in 203 iteration: 41.6 ms
+--------Enter 204's forward--------
+normal_forward in 204 itration: 42.5 ms
+--------Enter 205's forward--------
+normal_forward in 205 itration: 27.5 ms
+--------Enter 206's forward--------
+normal_forward in 206 itration: 27.2 ms
+--------Enter 207's forward--------
+normal_forward in 207 itration: 27.7 ms
+--------Enter 208's forward--------
+normal_forward in 208 itration: 27.2 ms
+--------Enter 209's forward--------
+normal_forward in 209 itration: 27.5 ms
+--------Enter 210's forward--------
+normal_forward in 210 itration: 27.0 ms
+--------Enter 211's forward--------
+normal_forward in 211 itration: 27.5 ms
+--------Enter 212's forward--------
+normal_forward in 212 itration: 27.3 ms
+--------Enter 213's forward--------
+normal_forward in 213 itration: 27.6 ms
+--------Enter 214's forward--------
+normal_forward in 214 itration: 28.8 ms
+--------Enter 215's forward--------
+normal_forward in 215 itration: 27.0 ms
+--------Enter 216's forward--------
+normal_forward in 216 itration: 26.8 ms
+--------Enter 217's forward--------
+normal_forward in 217 itration: 27.0 ms
+--------Enter 218's forward--------
+normal_forward in 218 itration: 26.5 ms
+--------Enter 219's forward--------
+!!!spike_forward in 219 iteration: 39.8 ms
+--------Enter 220's forward--------
+normal_forward in 220 itration: 40.4 ms
+--------Enter 221's forward--------
+normal_forward in 221 itration: 27.3 ms
+--------Enter 222's forward--------
+normal_forward in 222 itration: 26.8 ms
