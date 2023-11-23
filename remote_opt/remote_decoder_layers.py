@@ -47,6 +47,7 @@ class RemoteOPTDecoderLayers(nn.Module):
 
     # clears the kv_cache
     def clear_kv_cache(self):
+        del self.past_key_values
         self.past_key_values = None
 
     def forward(self, hidden_states, attention_mask):

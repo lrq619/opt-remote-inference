@@ -19,16 +19,19 @@ from .logger import init_logger
 
 class RemoteOPTDecoder(OPTDecoder):
     def __init__(self, config: OPTConfig, worker_layer_map):
+        print("init RemoteDecoder")
+        config.num_hidden_layers = 0
         super().__init__(config)
         self.logger = init_logger(model_name=MODEL_NAME)
         self.worker_layer_map = worker_layer_map
         self.layers_refs = []
         for worker in self.worker_layer_map.keys():
             self.logger.info(f"start loading worker: {worker}")
-            self.layers_refs.append(rpc.remote(worker, RemoteOPTDecoderLayers, args=(config, self.worker_layer_map[worker]),timeout=600))
-        # self.logger.info(f"going to sleep 2 min")
-        # time.sleep(120)
-        # self.logger.info(f"wake up from sleeping")
+            print(f"start loading worker: {worker}")
+            self.layers_refs.append(rpc.remote(worker, RemoteOPTDecoderLayers, args=(config, self.worker_layer_map[worker]),timeout=0))
+            print(f"end loading worker: {worker}")
+        
+
         for rref in self.layers_refs:
             _remote_method(RemoteOPTDecoderLayers.is_initialized, rref)
     

@@ -21,9 +21,6 @@ def remote_model_loading(model_name:str, world_size:int) -> (OPTConfig, PreTrain
     master_port = '29500'
     os.environ['MASTER_ADDR'] = master_addr
     os.environ['MASTER_PORT'] = master_port
-    print(f"master listening on {master_addr}:{master_port}")
-    rpc.init_rpc("master", rank = 0, world_size = world_size)
-    print("master init finished")
 
     print("start model loading")
     config = AutoConfig.from_pretrained(f"facebook/{model_name}")
@@ -44,6 +41,9 @@ def remote_model_loading(model_name:str, world_size:int) -> (OPTConfig, PreTrain
             torch.save(layers.state_dict(), save_dict_path)
             print(f"saved layers to {save_dict_path}")
 
+    print(f"master listening on {master_addr}:{master_port}")
+    rpc.init_rpc("master", rank = 0, world_size = world_size)
+    print("master init finished")
     model = RemoteOPTForCausalLM(config, worker_layer_map=WORKER_LAYERS_MAP)
 
     del model.get_decoder().layers

@@ -10,6 +10,8 @@ from .remote_opt_decoder import RemoteOPTDecoder
 
 class RemoteOPTForCausalLM(OPTForCausalLM):
     def __init__(self, config, worker_layer_map):
+        print("init RemoteOPTForCausalLM")
+        config.num_hidden_layers = 0
         super().__init__(config)
         # reinitialize a remote decoder
         self.model.decoder = RemoteOPTDecoder(config, worker_layer_map)

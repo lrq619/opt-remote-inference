@@ -47,7 +47,7 @@ def my_generate_remote(model : OPTForCausalLM, input_ids, max_new_tokens):
     past_key_values = None
     inference_latency = 0
     comm_overhead = 0
-    e2e_latency = 0
+    serving_latency = 0
     for i in range(max_new_tokens):
         if i == 0:
             model_inputs = model.prepare_inputs_for_generation(input_ids=_input_ids, use_cache=True, past_key_values=past_key_values)
@@ -63,7 +63,7 @@ def my_generate_remote(model : OPTForCausalLM, input_ids, max_new_tokens):
         inference_latencys, comm_overheads, inter_tensor_sizes = metrics
         inference_latency += sum(inference_latencys)
         comm_overhead += sum(comm_overheads)
-        e2e_latency += sum(inference_latencys) + sum(comm_overheads)
+        serving_latency += sum(inference_latencys) + sum(comm_overheads)
         
 
         next_token_logits = outputs.logits[:,-1,:]
@@ -73,7 +73,7 @@ def my_generate_remote(model : OPTForCausalLM, input_ids, max_new_tokens):
         next_tokens = torch.argmax(next_tokens_scores, dim=-1)
         _input_ids = torch.cat([_input_ids, next_tokens[:, None]], dim=-1)
 
-    return _input_ids, (inference_latency, comm_overhead, e2e_latency)
+    return _input_ids, (inference_latency, comm_overhead, serving_latency)
 
 
 def my_generate_with_ctp(model : OPTForCausalLM, input_ids, max_new_tokens):

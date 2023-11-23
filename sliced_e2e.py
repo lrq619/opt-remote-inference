@@ -60,9 +60,9 @@ for batch_idx in range(num_batches):
     with torch.no_grad():
         start = time.time()
         batch_generate_ids,metrics = my_generate_remote(model, batch_inputs["input_ids"], max_new_tokens=max_gt_output_token_length)
-        inference_latency, comm_overhead, e2e_latency = metrics
+        inference_latency, comm_overhead, serving_latency = metrics
 
-        run.collect('serving_latencys', e2e_latency)
+        run.collect('serving_latencys', serving_latency)
         run.collect('inference_latencys', inference_latency)
         run.collect('comm_overheads', comm_overhead)
     del batch_inputs
