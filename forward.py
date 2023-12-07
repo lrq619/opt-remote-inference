@@ -24,8 +24,8 @@ num_batches = (prompt_num + batch_size - 1) // batch_size
 batch_inputs = tokenizer(prompts, return_tensors="pt", padding=True).to(device)
 
 input_ids = batch_inputs["input_ids"]
-warm_up(model, input_ids)
-print(f"finish warm up")
+# warm_up(model, input_ids)
+# print(f"finish warm up")
 
 logits_processor = LogitsProcessorList()
 

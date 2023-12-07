@@ -13,8 +13,10 @@ device="cuda:0"
 model:OPTForCausalLM
 config, tokenizer, model = baseline_model_loading(MODEL_NAME)
 
+start = time.time()
 model.to(device)
 model.eval()
+print(f"sending model to device use {(time.time() - start)*1000:.1f} ms")
 
 prompt_num = 16
 prompts, gt_responses = preprocess_alpaca(prompt_num)
@@ -46,4 +48,4 @@ for batch_idx in range(num_batches):
     max_gt_output_token_length = max(batch_gt_output_token_lengths)
 
     with torch.no_grad():
-        batch_generate_ids = my_generate_whole_model(model, batch_inputs["input_ids"], max_new_tokens=50)
+        batch_generate_ids = my_generate_whole_model(model, batch_inputs["input_ids"], max_new_tokens=max_gt_output_token_length)
