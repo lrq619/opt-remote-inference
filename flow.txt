@@ -1,0 +1,23 @@
+Append run success, current run: [remote_decoder_layer:run_41, status=RunStatus.COLLECT]
+Append run success, current run: [generate_case_study:run_95, status=RunStatus.COLLECT]
+start model loading
+model loading finished
+/state_dict/opt-30b/layers-0-15.pth already stored, skip saving
+/state_dict/opt-30b/layers-16-31.pth already stored, skip saving
+master listening on 0.0.0.0:29500
+master init finished
+init RemoteOPTForCausalLM
+init RemoteDecoder
+2023-12-13T12:48:04.388 INFO remote_opt_decoder.py:29 start loading worker: 1
+start loading worker: 1
+end loading worker: 1
+2023-12-13T12:48:04.390 INFO remote_opt_decoder.py:29 start loading worker: 2
+try to join master
+join master finished
+Append run success, current run: [remote_decoder_layer:run_42, status=RunStatus.COLLECT]
+2023-12-13T12:48:05.321 INFO remote_decoder_layers.py:28 Enter remote layers loading
+try to join master
+join master finished
+Append run success, current run: [remote_decoder_layer:run_43, status=RunStatus.COLLECT]
+2023-12-13T12:48:05.323 INFO remote_decoder_layers.py:28 Enter remote layers loading
+2023-12-13T12:50:12.202 INFO remote_decoder_layers.py:43 Leaving remote layers loading

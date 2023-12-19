@@ -7,6 +7,7 @@ import time
 from data_process import forward_case_study, generate_case_study
 import numpy as np
 import ctp
+import utils
 
 def process_metrics(metrics):
     # forward_case_study(metrics) 
@@ -23,13 +24,6 @@ def my_generate(model : OPTForCausalLM, input_ids, max_new_tokens):
     for i in range(max_new_tokens):
         model_inputs = model.prepare_inputs_for_generation(input_ids=_input_ids, use_cache=True, past_key_values=past_key_values)
         outputs = model.forward(**model_inputs)
-
-        # inference_latencys, comm_overheads, inter_tensor_sizes = metrics
-        # inference_latency += sum(inference_latencys)
-        # comm_overhead += sum(comm_overheads)
-        # e2e_latency += sum(inference_latencys) + sum(comm_overheads)
-        # process_metrics(metrics)
-        
 
         next_token_logits = outputs.logits[:,-1,:]
         past_key_values = outputs.past_key_values
@@ -48,7 +42,9 @@ def my_generate_remote(model : OPTForCausalLM, input_ids, max_new_tokens):
     inference_latency = 0
     comm_overhead = 0
     serving_latency = 0
+    run = ctp.append_run("slice0_kv_cache")
     for i in range(max_new_tokens):
+        print(f"---------------{i}'th forward----------------")
         if i == 0:
             model_inputs = model.prepare_inputs_for_generation(input_ids=_input_ids, use_cache=True, past_key_values=past_key_values)
         else:
@@ -68,10 +64,16 @@ def my_generate_remote(model : OPTForCausalLM, input_ids, max_new_tokens):
 
         next_token_logits = outputs.logits[:,-1,:]
         past_key_values = outputs.past_key_values
+        if past_key_values is not None:
+            size = utils.calculate_kv_cache_bytes(past_key_values) / 1024
+            print(f"slice1 kv-cache size:{size:.1f}KB")
+            run.collect("sizes", size)
         next_tokens_scores = logits_processor(_input_ids, next_token_logits)
 
         next_tokens = torch.argmax(next_tokens_scores, dim=-1)
         _input_ids = torch.cat([_input_ids, next_tokens[:, None]], dim=-1)
+
+    run.stop_collect()
 
     return _input_ids, (inference_latency, comm_overhead, serving_latency)
 
@@ -116,6 +118,7 @@ def my_generate_whole_model(model : OPTForCausalLM, input_ids, max_new_tokens):
     logits_processor = LogitsProcessorList()
     past_key_values = None
     run = ctp.append_run("transformer_generate_case_study")
+    previous_kv_size = 0
     for i in range(max_new_tokens):
         model_inputs = model.prepare_inputs_for_generation(input_ids=_input_ids, use_cache=True, past_key_values=past_key_values)
         start = time.time()
@@ -127,6 +130,14 @@ def my_generate_whole_model(model : OPTForCausalLM, input_ids, max_new_tokens):
 
         next_token_logits = outputs.logits[:,-1,:]
         past_key_values = outputs.past_key_values
+
+        past_key_values = None
+        
+        if past_key_values is not None:
+            
+            kv_size = utils.calculate_kv_cache_bytes(past_key_values)
+            print(f"kv-cache size: {kv_size/1024:.1f}KB, delta: {(kv_size-previous_kv_size)/1024:.1f}KB")
+            previous_kv_size = kv_size
         next_tokens_scores = logits_processor(_input_ids, next_token_logits)
 
         next_tokens = torch.argmax(next_tokens_scores, dim=-1)

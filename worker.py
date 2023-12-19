@@ -2,6 +2,7 @@ import os
 import argparse
 import torch.distributed.rpc as rpc
 import torch.distributed as dist
+import time
 os.environ['MASTER_ADDR'] = 'localhost'
 os.environ['MASTER_PORT'] = '29500'
 
@@ -13,6 +14,7 @@ args = parser.parse_args()
 rank = args.rank
 world_size = args.world_size
 
+time.sleep(420)
 print("try to join master")
 rpc.init_rpc(f"worker{rank}", rank=rank, world_size=world_size)
 print("join master finished")

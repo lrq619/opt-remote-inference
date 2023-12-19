@@ -19,3 +19,32 @@ def send_past_key_value_to(past_key_values, device:str):
 
     del past_key_values
     return new_key_values
+
+def calculate_tensor_bytes(tensor):
+    """
+    Calculates the number of bytes occupied by a tensor.
+
+    Args:
+    tensor (np.ndarray): The tensor for which to calculate the byte size.
+
+    Returns:
+    int: The number of bytes occupied by the tensor.
+    """
+    return tensor.size * tensor.itemsize
+
+def calculate_tuple_bytes(tuple):
+    sum = 0
+    for tensor in tuple:
+        sum += tensor.size * tensor.itemsize
+    return sum
+
+def calculate_kv_cache_bytes(kv_cache):
+    sum = 0
+    # print(f"type of kv_cache: {type(kv_cache)}")
+    # print(f"type of element in kv_cache:{type(kv_cache[0])}")
+    # print(f"type of element in kv_cache element:{type(kv_cache[0][0])}")
+    for tuple in kv_cache:
+        for tensor in tuple:
+            sum += tensor.numel() * tensor.element_size()
+    return sum
+

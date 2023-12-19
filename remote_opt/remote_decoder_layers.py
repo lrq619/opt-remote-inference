@@ -12,11 +12,13 @@ import time
 import copy
 from .config import FORWARD_PORT, MODEL_NAME, STATE_DICT_PATH
 from .logger import init_logger
-from .utils import get_object_size, send_past_key_value_to
-
+from .utils import get_object_size, send_past_key_value_to,calculate_kv_cache_bytes
+import ctp
 
 MAX_SEND_SIZE = -1 # disable the size limite
 MAX_RECEIVE_SIZE = -1 # disable the size limite
+
+run=ctp.append_run("remote_decoder_layer")
 
 class RemoteOPTDecoderLayers(nn.Module):
     def __init__(self, config, layers_range, *args, **kwargs) -> None:
@@ -52,8 +54,11 @@ class RemoteOPTDecoderLayers(nn.Module):
 
     def forward(self, hidden_states, attention_mask):
 
-        self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask))/(1024):.1f}KB")
+        # self.logger.info(f"received decoder input size:{get_object_size((hidden_states, attention_mask))/(1024):.1f}KB")
 
+        inter_size = get_object_size((hidden_states, attention_mask))/1024
+        run.collect("inter_sizes", inter_size)
+        print(f"intermediate tensor size:{get_object_size((hidden_states, attention_mask))/(1024):.1f}KB")
         hidden_states = hidden_states.to('cuda:0')
         attention_mask = attention_mask.to('cuda:0')
 
@@ -61,6 +66,10 @@ class RemoteOPTDecoderLayers(nn.Module):
 
         use_cache = True
         output_attentions = True
+        if self.past_key_values != None:
+            slice2_kv_cache_size = calculate_kv_cache_bytes(self.past_key_values)/1024
+            run.collect("slice2_kv_cache_sizes", slice2_kv_cache_size)
+            print(f"slice2 kv-cache size:{slice2_kv_cache_size:.1f}KB")
 
         next_decoder_cache = () if use_cache else None
         start = time.time() 
